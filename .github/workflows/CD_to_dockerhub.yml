@@ -1,7 +1,8 @@
 name: CD-to-DockerHub
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
   docker-deploy:
@@ -20,6 +21,6 @@ jobs:
     - name: Build and push image
       run: |
         IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/python-app
-        docker build -t $IMAGE:latest .
-        docker tag $IMAGE:latest $IMAGE:${{ env.TS }}
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/python-app:latest
+        VERSION="${{ github.ref_name }}"
+        docker build -t $IMAGE:$VERSION .
+        docker push $IMAGE:$VERSION
